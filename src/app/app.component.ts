@@ -2,9 +2,17 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  template: `
+        <div class="head">
+            <img src="logo2.jpg">
+            <h1>VEPP-2000 Data Access Interface</h1>    
+            <nav>
+              <a routerLink="/channel" routerLinkActive="active">Channel</a>
+              <a routerLink="/data" routerLinkActive="active">Data</a>
+            </nav>
+            <router-outlet></router-outlet>
+        </div>
+   
+  `
 })
-export class AppComponent {
-  title = 'app';
-}
+export class AppComponent {}
