@@ -9,9 +9,6 @@ import { config } from './config';
 
 declare let jQuery: any;
 
-import * as $ from 'jquery';
-import {ar} from "ngx-bootstrap/bs-moment/i18n/ar";
-
 @Component({
     selector: 'data-app',
     template: `
@@ -75,7 +72,7 @@ import {ar} from "ngx-bootstrap/bs-moment/i18n/ar";
                 </div>               	
                     
                 <div class="button">
-                     	<button class="btn btn-default" (click)="getCalculation(time1, time2, false)">Send</button>
+                     	<button class="btn btn-default" (click)="getCalculation()">Send</button>
                      	<button class="btn btn-default" (click)="downloadScript()">Download</button>
                	</div>   
                	 <div *ngIf="!print_raw" class="my-chart">
@@ -361,6 +358,11 @@ export class DataComponent implements OnInit{
 	condition: boolean = false;
 	value: number;
 	type = 'line';
+	average: string;
+	data_sampler: string;
+	chart: string;
+	error_bar: string;
+	table: string;
 	average_condition: boolean = false;
 	data_sampler_condition: boolean = false;
 	raw_conditin: boolean = false;

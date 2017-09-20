@@ -295,6 +295,7 @@ export class Options {
 	@Input() check_method: string;
   @Input() chart_condition: boolean = true;
   @Input() error_ber_condition: boolean = false;
+  auto: string;
 	data: any;
 	arr: any;
 	start_arr: number = 0;
