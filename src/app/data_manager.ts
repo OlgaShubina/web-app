@@ -13,7 +13,6 @@ export class DataManager implements OnInit {
     compress_method: string;
     compress_level: number;
     constructor(){
-        console.log("constructor");
     }
     ngOnInit(){
 

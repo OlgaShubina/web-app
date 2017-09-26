@@ -36,6 +36,7 @@ export class HttpService{
         return this.http.post(config.url.templates,  body, { headers: headers })
 						.map((resp:Response)=>{
               var a = document.createElement('a');
+              $("body").append(a);
               let blob = new Blob([resp.text()], [])
               let template = resp.text();
               a.href = window.URL.createObjectURL(blob);

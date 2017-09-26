@@ -21,8 +21,7 @@ import {ParsTree} from './pars_tree'
 						   </details>						   
 						 </li>
 					   </ul>		
-				</div>
-			   	   
+				</div>		   	   
 				 
 			   `,
 
@@ -30,9 +29,6 @@ import {ParsTree} from './pars_tree'
 	  .selected {
 		background-color: #DCD0C0 !important;
 		color: #373737;
-	  }
-	  .main_channels{
-	  	padding-top: 70px;
 	  }
 	  .channels {
 		margin: 0 0 2em 0;
@@ -98,6 +94,12 @@ export class ChannelComponent implements OnInit {
 				data => {
 					this.channelsresponse = data;
 					this.arr = this.parsTree.getChannel(data);
+					let array_name = Object.keys(this.channelsresponse).sort();
+					let buff: any[] = [];
+					for(let i = 0; i<array_name.length; i++){
+					  buff[array_name[i]] = this.channelsresponse[array_name[i]];
+          }
+          this.channelsresponse = buff;
 					for (var key in this.channelsresponse) {
 						this.channels.push(key);
 					}

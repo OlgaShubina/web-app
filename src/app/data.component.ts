@@ -2,9 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { HttpService} from './http.service';
 import {ParsTree} from './pars_tree'
 import { Request } from './request';
-import {ElementRef, ViewChild} from '@angular/core';
 import {DataManager} from './data_manager';
-import {jQHTMLElement} from './jq_interface'
 import { config } from './config';
 
 declare let jQuery: any;
@@ -12,204 +10,181 @@ declare let jQuery: any;
 @Component({
     selector: 'data-app',
     template: `
-		<div>	 		
+		<div class="main">	 		
 			<div class="block1">
-				    <div class="form-group">				    
-				        <label>Time1</label>
-				       <input type="text" id="datetimepicker1" name="time1" [(ngModel)]="time1" (change)="setTime1(time1)"/>
-                    </div>               
-                 
-                     <div class="time2">                   
-				        <label>Time2</label>
-				        <input type="text" id="datetimepicker2" name="time2" [(ngModel)]="time2"/>
-                    </div>
-                </div>
-                <div class="block3">            
-            		<h3>Compression method</h3>
-                	<div class="radio"><input type="radio" value="average" checked name="average" [(ngModel)]="check_level" [checked]="check_level==average" (change)="setLevel(check_level)"checked>average</div>
-                	<div class="radio"><input type="radio" value="data_sampler" name="data_sampler" [(ngModel)]="check_level" [checked]="check_level==data_sampler" (change)="setLevel(check_level)">data_sampler</div>	
-               
-               	</div>
-               	<div class="table">
-                    <h3>Display method</h3>
-                    <div class="radio"><input type="radio" value="chart" checked name="chart" [(ngModel)]="check_method" [checked]="check_method==chart" (change)="setMethod(check_method)"checked>chart</div>
-                    <div class="radio"><input type="radio" value="error_bar" checked name="error_bar" [(ngModel)]="check_method" [checked]="check_method==error_bar" (change)="setMethod(check_method)">error_bar</div>
-                    <div class="radio"><input type="radio" value="table" checked name="table" [(ngModel)]="check_method" [checked]="check_method==table" (change)="setMethod(check_method)">table</div>
-                  </div>  
-               	<div class="field">            
-                    <h3>Field of table</h3>
-                    	<div *ngIf="!data_sampler_condition&&!error_bar_condition">
-                            <select class="select" id="average" name="average" [(ngModel)]="field">
-                                <option value="avg" checked>Average value</option>
-                                <option value="min">Minimum value</option>
-                                <option value="max">Maximum value</option>
-                                <option value="mediana">Median</option>
-                                <option value="sygma">Sigma</option>
-                            </select>
-                    </div>
-                      <div *ngIf="!data_sampler_condition&&error_bar_condition">
-                            <select class="select" id="average" name="average" [(ngModel)]="field">
-                                <option value="avg_sigma" checked>Average value with sigma</option>
-                                <option value="avg" checked>Average value with min/max</option>                            
-                                <option value="mediana_sigma">Median with sigma</option>
-                                <option value="mediana">Median with min/max</option>
-                            </select>
-                    </div>  
-                    	<div *ngIf="data_sampler_condition&&!error_bar_condition">                      
-                            <select class="select" id="average" name="average" [(ngModel)]="field">
-                                <option value="left_bound" checked>Left border</option>
-                                <option value="right_bound">Right border</option>
-                                <option value="center">Central value</option>
-                                <option value="most_freq">Most frequent value</option>
-                            </select>
-                    	</div>
-                    	<div *ngIf="data_sampler_condition&&error_bar_condition">                      
-                            <select class="select" id="average" name="average" [(ngModel)]="field">                     
-                                <option value="center">Central value with bound</option>
-                                <option value="most_freq">Most frequent value with bound</option>
-                            </select>
-                    	</div>
-                </div>               	
+			  <div class="time1">		    
+				  <input type="text" id="datetimepicker1" name="time1" style="width:140px;" [(ngModel)]="time1" (change)="setTime1(time1)"/>
+        </div>                  
+        <div class="time2">                   
+				  <label>-</label>
+				  <input type="text" id="datetimepicker2" name="time2" style="width:140px;" [(ngModel)]="time2"/>
+        </div>
+      </div>
+      
+      <div class="block4">
+        <select class="select" id="display_method" name="display_method" [(ngModel)]="check_method" (change)="setMethod(check_method)">
+          <option value="chart" disabled checked>Select display method</option>
+          <option value="chart">Chart</option>
+          <option value="error_bar">Error bar</option>
+          <option value="table">Table</option>
+        </select>
+      </div>  
+      
+      <div class="block5">            
+        <div *ngIf="!data_sampler_condition&&!error_bar_condition">
+          <select class="select" id="average" name="average" [(ngModel)]="field">
+            <option value="avg" disabled checked>Select field</option>
+            <option value="avg">Average value</option>
+            <option value="min">Minimum value</option>
+            <option value="max">Maximum value</option>
+            <option value="mediana">Median</option>
+            <option value="sygma">Sigma</option>
+          </select>
+        </div>
+        
+        <div *ngIf="!data_sampler_condition&&error_bar_condition">
+          <select class="select" id="average" name="average" [(ngModel)]="field">
+            <option value="avg" disabled checked>Select field</option>
+            <option value="avg_sigma" checked>Average value with sigma</option>
+            <option value="avg">Average value with min/max</option>                            
+            <option value="mediana_sigma">Median with sigma</option>
+            <option value="mediana">Median with min/max</option>
+          </select>
+        </div>  
+        
+        <div *ngIf="data_sampler_condition&&!error_bar_condition">                      
+          <select class="select" id="average" name="average" [(ngModel)]="field">
+            <option value="avg" disabled checked>Select field</option>
+            <option value="left_bound" checked>Left border</option>
+              <option value="right_bound">Right border</option>
+              <option value="center">Central value</option>
+              <option value="most_freq">Most frequent value</option>
+          </select>
+        </div>
+        
+        <div *ngIf="data_sampler_condition&&error_bar_condition">                      
+          <select class="select" id="average" name="average" [(ngModel)]="field">  
+            <option value="avg" disabled checked>Select field</option>
+            <option value="center_bound" checked>Central value with bound</option>
+            <option value="most_freq_bound">Most frequent value with bound</option>
+          </select>
+        </div>
+      </div>               	
+       
+      <div class="block3"> 
+          <select class="select" id="compression_method" name="compression_method" [(ngModel)]="check_level" (change)="setLevel(check_level)">
+             <option value="average" disabled checked>Select compression method</option>
+            <option value="average" checked>Average</option>
+            <option value="data_sampler">Data Sampler</option>
+          </select>
+      </div>
                     
-                <div class="button">
-                     	<button class="btn btn-default" (click)="getCalculation()">Send</button>
-                     	<button class="btn btn-default" (click)="downloadScript()">Download</button>
-               	</div>   
-               	 <div *ngIf="!print_raw" class="my-chart">
-               	    <my-chart (conditionChange)=conditionChange($event) [error_ber_condition]="error_bar_condition"[chart_condition]="chart_condition" [table_draw_condition]="table_draw_condition" [check_method]="check_method" [alarm_condition]="alarm_condition" [send_condition]="send_condition" [time1]="time1" [time2]="time2" [field]="field" [check_level]="check_level" [channels]="checked" [compress_level]="compress_level" [value] ="value" [condition]="graph_condition" [raw_condition]="view_raw_condition"></my-chart>
-         
-                 </div>               
-				<br>
-				<div *ngIf="print_raw" class="print_raw">
+      <div class="button">
+        <button class="btn btn-default" (click)="getCalculation()">Plot</button>
+        <button class="btn btn-default" (click)="downloadScript()">Download</button>
+      </div>   
+			
+      <div class="block2" id="block2">	 
+          <ul class="channels" >				 
+				    <li *ngFor="let channel of channels"
+				      [class.selected]="channel.name === selectedChannel"
+				      (click)="onSelect(channel.name)">	
+				      <div *ngIf="!channel.condition">
+							  <details>
+								  <summary>{{channel.name}}</summary>
+									<ul>
+									  <my-data-detail [channel]="arr[channel.name]" [checked]="checked"></my-data-detail>
+									</ul>
+								</details>
+        		  </div>
+        		  <div *ngIf="channel.condition">
+        		    <input type="checkbox" value="{{channel.name}}" (change)="setCheck(channel.name)"/> {{channel.name}}
+        		  </div>
+				    </li>
+          </ul>                  
+      </div> 
+       
+    </div>       
+    	 
+    	 <div *ngIf="print_raw" class="print_raw" id="print_raw">
           <nav>
-            <a routerLink="/data/info" routerLinkActive="active">Info</a>
+            <a routerLink="/data/info" routerLinkActive="active" id="info">Info</a>
           </nav>
-          <pre>{{template}}</pre>			
-					
-				</div>
-               	<div class="block2">	 
-                    <div style="overflow:scroll; height: 500px;">
-                         <ul class="channels" >				 
-				               <li *ngFor="let channel of channels"
-				                [class.selected]="channel.name === selectedChannel"
-				                (click)="onSelect(channel.name)">	
-				                	<div *ngIf="!channel.condition">
-										<details>
-										<summary>{{channel.name}}</summary>
-											<ul>
-												<my-data-detail [channel]="arr[channel.name]" [checked]="checked"></my-data-detail>
-											</ul>
-										</details>
-        		                    </div>
-        		                    <div *ngIf="channel.condition">
-        		                    	<input type="checkbox" value="{{channel.name}}" (change)="setCheck(channel.name)"/> {{channel.name}}
-        		                    </div>
-				   						
-				                </li>
-                         </ul>	
-                    </div>                   
-                 
-             	</div>  
-           </div>
-                  
-                
-				
+          <pre>{{template}}</pre>	
+			</div> 
+    	 
+      <div *ngIf="!print_raw" class="my-chart" id="my_chart">
+        <my-chart (conditionChange)=conditionChange($event) [error_ber_condition]="error_bar_condition"[chart_condition]="chart_condition" [table_draw_condition]="table_draw_condition" [check_method]="check_method" [alarm_condition]="alarm_condition" [send_condition]="send_condition" [time1]="time1" [time2]="time2" [field]="field" [check_level]="check_level" [channels]="checked" [compress_level]="compress_level" [value] ="value" [condition]="graph_condition" [raw_condition]="view_raw_condition"></my-chart>
+      </div>  
+            	 
+            	
 	`,
 	styles:[`
+    .my-chart{
+      float: right;
+    }
+    .main{
+      float: left;
+      width: 350px;
+    }
 		.select{
-			width: 200px;
-		}
-		.axis path,
-	  .axis line{
-		fill: none;
-		stroke: black;
-	  }
-	
-	  .line{
-		fill: none;
-		stroke: blue;
-		stroke-width: 2px;
-	  }
-	
-	  .tick text{
-		font-size: 12px;
-	  }
-	
-	  .tick line{
-		opacity: 0.2;
-	  }
-		.radio{
-			float: left;
+			width: 100%;
 		}
 		.channels li{
-			width: 270px;
+			width: 100%;
 			padding: 0px;
 		}
-		.form-group{
-			width: 300px;
-			float: left;
-			margin-top: -5px;
-			
+		.time1{
+			width: 160px;
+			float: left;			
 		}
-		.time2{			
-			padding-top: 50px;
-			width: 300px;
-			margin-top: -20px;
+		.time2{		
+			float: left;
+			width: 175px;
 		}
 		.block2{
 			float: left;
-			padding: 0px;
-			margin-left: 1000px;
-			margin-top: -520px;
-		
+			width: 350px;
+			height: 500px;
+			overflow:scroll; 
 		}
 		.block1{
 			float: left;
-			width: 140px;
-			margin-top: 80px;
-			margin-left: -25%;
+			margin: 5px;
 		}
 		.block3{
 			float: left;
-			margin-left: -5%;
-			margin-top: 55px;
-			text-align: center;
-			
+			width: 190px;	
+			margin-left: 5px;
+			margin-top: 10px;
+			text-align: center;			
 		}
 		.button{
-		 	padding-top: 135px;
-		  
+		 	float: left;
+		 	margin-left: 20px;
+		 	margin-top: 10px;
 		}		
 		.print_raw{
-		  padding-top: -10px;
-			padding-left: 10px;
-			width: 960px;
-			height: 500px;
-			float:left;
+		  margin-top: 1%;
+			float:right;
 			border-style: ridge;	
 			color: #444444;
 			overflow-y: scroll;
 		}
-		.table{
-			float: left;
-			
-			margin-top: 55px;
+		.block4{
+			float: left;			
+	    width: 160px;
 			text-align: center;
-					
+			margin-left: 5px;	
+			margin-top: 5px;
 		}
-		.field{
-			
+		.block5{			
 			float: left;
-			
-			margin-top: 55px;
+			margin-left: 15px;	
+			margin-top: 5px;		
+			width: 160px;
 			text-align: center;
 			
-		}
-		. block3 h3{
-			padding: 0px;
-			margin: 0px;
-			-webkit-margin-before: 0px;
-			font-size: 0px;			
 		}
 		input[type=range].slider1 {
 		  -webkit-appearance: none;
@@ -362,7 +337,6 @@ export class DataComponent implements OnInit{
 	data_sampler: string;
 	chart: string;
 	error_bar: string;
-	table: string;
 	average_condition: boolean = false;
 	data_sampler_condition: boolean = false;
 	raw_conditin: boolean = false;
@@ -422,11 +396,31 @@ export class DataComponent implements OnInit{
 
 	}
   downloadScript(){
-	    this.setLevel("raw");
-
+    if((Date.parse(this.time2)-Date.parse(this.time1))<=0){
+       alert("Enter the correct date");
+    }
+    else if(this.checked.length>6){
+      alert("Select up to six channels");
+    }
+    else if(this.checked.length<1){
+      alert("Сhoose channels");
+    }
+    else{
+      this.setLevel("raw");
       this.print_raw = this.raw_conditin;
-			this.httpService.getTemplate({t1:String(this.time1)+":00.00000", t2:String(this.time2)+":00.00000", channels: this.checked, level: "raw"}).subscribe(data=>{this.template=data["template"]; this.url=data["url"]});
-	}
+			this.httpService.getTemplate({t1:String(this.time1)+":00.00000", t2:String(this.time2)+":00.00000", channels: this.checked, level: "raw", "url": config.url["template_url"], "host": config.url["template_host"], "port": config.url["template_port"]}).subscribe(data=>{this.template=data["template"]; this.url=data["url"]});
+      $(document).ready(function (){
+        document.getElementById('print_raw').style.height = window.innerHeight - 120 + "px";
+      document.getElementById('print_raw').style.width = window.innerWidth - 400 + "px";
+
+      window.onresize = function () {
+        document.getElementById('print_raw').style.height = window.innerHeight - 100 + "px";
+        document.getElementById('print_raw').style.width = window.innerWidth - 400 + "px";
+      };
+      });
+
+    }
+  }
 	createPointChart(data: any[], l_this: any){
 	    l_this.data_arr = [];
 		for(var i in data){
@@ -449,21 +443,21 @@ export class DataComponent implements OnInit{
 
 	}
 
-
 	getData(time1: string, time2:string, compress_level: string, channels: any[], check_level: string){
 		var request = new Request(time1, time2, channels, check_level, compress_level, this.httpService);
 		request.execute(this);
 	}
 
 	getCalculation(){
-    this.print_raw = false;
-    console.log(this.time1, this.time2, Date.parse(this.time2)-Date.parse(this.time1));
-
+    this.setLevel(this.check_level);
     if((Date.parse(this.time2)-Date.parse(this.time1))<=0){
        alert("Enter the correct date");
     }
     else if(this.checked.length>6){
       alert("Select up to six channels");
+    }
+    else if(this.checked.length<1){
+      alert("Сhoose channels");
     }
     else{
       this.value=this.checked.length-1;
@@ -515,10 +509,8 @@ export class DataComponent implements OnInit{
 	}
 	setTime1(time:string){
 	  this.time1 = time;
-	  console.log(this.time1);
   }
 	ngOnInit() {
-	  console.log(config.interval);
 	  let l_this = this;
 	  jQuery('#datetimepicker1').datetimepicker({
       format:"Y-m-d H:i",
@@ -541,12 +533,16 @@ export class DataComponent implements OnInit{
       step: 30,
       minDate: "2013/01/01",
       maxDate: 0,
-      startDate: new Date(Date.now()),
       lang: "ru",
       onChangeDateTime:function(dp,$input){
           l_this.time2 = $input.val();
       }
     });
+    jQuery('#datetimepicker2').on('click', function (){
+      var x = jQuery('#datetimepicker1').datetimepicker('getValue');
+      jQuery('#datetimepicker2').datetimepicker('setOptions', {startDate: new Date(l_this.time1)});
+    });
+
 		this.current_chunk = new DataManager();
 		this.httpService.getData()
             .subscribe(
@@ -574,6 +570,13 @@ export class DataComponent implements OnInit{
 					console.log(error);
 				}
 			);
+      document.getElementById('block2').style.height = window.innerHeight - 200 + "px";
+
+      window.onresize = function () {
+        document.getElementById('block2').style.height = window.innerHeight - 200 + "px";
+      };
+
+
 	}
 
 	onSelect(channel: string) {

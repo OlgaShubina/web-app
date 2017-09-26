@@ -32,11 +32,15 @@ h2, h3 {
   color: #373737;;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: lighter;
-
+  margin: 0px;
+}
+.h4{
+  margin: 0px;
+  padding: 0px;
 }
 body {
   background-color: #F4F4F4;
-
+  width: 99%;
 }
 body, input[text], button {
   color: #373737;;
@@ -47,6 +51,10 @@ a {
   cursor: pointer;
   cursor: hand;
 }
+.summary {
+  display: inline;
+}
+
 button {
   font-family: Arial;
   background-color: #DCD0C0;
@@ -64,7 +72,6 @@ button:disabled {
   color: #373737;
   cursor: auto;
 }
-
 /* Navigation link styles */
 nav a {
   padding: 10px 25px;
@@ -90,7 +97,6 @@ nav a.active {
   background-color: #F4F4F4;
 
 }
-
 /* items class */
 .items {
   margin: 0 0 2em 0;

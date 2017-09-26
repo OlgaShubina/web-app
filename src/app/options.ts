@@ -8,25 +8,7 @@ declare let Plotly: any;
 
 @Component({
   selector: 'my-chart',
-  template:`
-	
-
-	<div class="detail">            
-    	<h3>Detailing chart</h3>     
-    	<div class="checkbox"><input  type="checkbox" value="{{auto}}" (change)="setCheck()"/> auto</div>        
-        <nav class="segmented-button">
-			  <input type="radio" name="seg-1" value="raw" id="seg-raw" (click)="reloadData(0)" [checked]="alarm_condition.checked[0]" [disabled]="alarm_condition.disabled[0]">
-			  <label for="seg-raw" class="first">raw</label>
-			  <input type="radio" name="seg-1" value="level1" id="seg-level1" (click)="reloadData(1)" [checked]="alarm_condition.checked[1]" [disabled]="alarm_condition.disabled[1]">
-			  <label for="seg-level1">level 1</label>
-			  <input type="radio" name="seg-1" value="level2" id="seg-level2" (click)="reloadData(2)" [checked]="alarm_condition.checked[2]" [disabled]="alarm_condition.disabled[2]">
-			  <label for="seg-level2">level 2</label>
-			  <input type="radio" name="seg-1" value="level3" id="seg-level3" (click)="reloadData(3)" [checked]="alarm_condition.checked[3]" [disabled]="alarm_condition.disabled[3]">
-			  <label for="seg-level3" class="last">level 3</label>
-		</nav>
-       
-   </div>
-    
+  template:`    
     <div class="loader" *ngIf="send_condition" id="wrapper">
       <div id="border">
         <div id="whitespace">
@@ -35,10 +17,9 @@ declare let Plotly: any;
         </div>
       </div>
     </div>
-	<div *ngIf="chart_condition || error_ber_condition" class="myCanvas" id="myDiv" style="width: 970px; height: 500px;"></div>
+	<div *ngIf="chart_condition || error_ber_condition" class="myCanvas" id="myDiv" style="width: 100%; height: 100%;"></div>
 	
-	
-	<div *ngIf="table_draw_condition" class="table_class">
+	<div *ngIf="table_draw_condition" width="100%" class="table_class" id="table">
 		<table border="1" width="970" cellpadding="5" *ngFor="let name of channels_name">
 			<tr><th>{{name}}</th></tr>
 			<tr>
@@ -49,6 +30,20 @@ declare let Plotly: any;
 			  	<td *ngFor="let row of data" >{{row}}</td>
 	 	</table>
 	</div>
+	<div class="detail">                
+    	<div class="checkbox"><input  type="checkbox" value="{{auto}}" (change)="setCheck()"/> auto</div>        
+        <nav class="segmented-button">
+			  <input type="radio" name="seg-1" value="raw" id="seg-raw" (click)="reloadData(0)" [checked]="alarm_condition.checked[0]" [disabled]="alarm_condition.disabled[0]">
+			  <label for="seg-raw" class="first">raw</label>
+			  <input type="radio" name="seg-1" value="level1" id="seg-level1" (click)="reloadData(1)" [checked]="alarm_condition.checked[1]" [disabled]="alarm_condition.disabled[1]">
+			  <label for="seg-level1">level 1</label>
+			  <input type="radio" name="seg-1" value="level2" id="seg-level2" (click)="reloadData(2)" [checked]="alarm_condition.checked[2]" [disabled]="alarm_condition.disabled[2]">
+			  <label for="seg-level2">level 2</label>
+			  <input type="radio" name="seg-1" value="level3" id="seg-level3" (click)="reloadData(3)" [checked]="alarm_condition.checked[3]" [disabled]="alarm_condition.disabled[3]">
+			  <label for="seg-level3" class="last">level 3</label>
+		    </nav>
+       
+   </div>
   	
   `,
   styles:[`
@@ -57,16 +52,13 @@ declare let Plotly: any;
 			padding-right: 10px;
 		}
 		.detail{
-			float: right;
-			margin-right: 4%;
-			margin-top: -105px;
+			float: top;
 			text-align: center;
 		}
 		.myCanvas{
 			position: relative;
-			float:left;
-			width: 970px;
-			height: 500px;
+			float:right;
+			margin-top: 1%;			
 			border-color: black;
 		}
 		.segmented-button {
@@ -197,9 +189,7 @@ declare let Plotly: any;
 		  box-shadow: none;
 		}
 		.table_class{
-			height: 500px;
 			overflow-y:scroll;
-			width: 990px;
 		}
 		
     .loader{
@@ -210,7 +200,7 @@ declare let Plotly: any;
       height: 20px;
       position: absolute;
       top: 60%;
-      left: 35%;
+      left: 60%;
     }
     
     #border {
@@ -526,7 +516,6 @@ export class Options {
 			}
 	 		else if(level<this.compress_level){
 	 		  this.condition = false;
-	 		  console.log("reload");
 	 			this.compress_level -= 1;
 	 			//this.time1 = this.time_format(this.start_arr);
 	 			//this.time2 = this.time_format(this.end_arr);
@@ -544,12 +533,21 @@ export class Options {
 
 	ngOnChanges(){
 		if(this.send_condition==true){
-		  console.log("change");
 			var request = new Request(String(this.time1)+":00.00000", String(this.time2)+":00.00000", this.channels, this.check_level, this.compress_level_arr[this.compress_level]["level"], this.httpService);
 			request.execute(this);
 		}
 		else{
-			this.createDataChart();
+		  this.createDataChart();
+		  if(this.table_draw_condition==true){
+		     $(document).ready(function () {
+		        document.getElementById('table').style.height=window.innerHeight-120+"px";
+            document.getElementById('table').style.width=window.innerWidth-400+"px";
+            window.onresize = function(){
+              document.getElementById('table').style.height=window.innerHeight-120+"px";
+              document.getElementById('table').style.width=window.innerWidth-400+"px";
+            };
+         });
+      }
 		}
 	}
 	createPointChart(data: any[], l_this: any){
@@ -651,16 +649,16 @@ export class Options {
                     error1.push(this.data_arr[i][k]["sygma"]);
                     error2.push(this.data_arr[i][k]["sygma"]);
                     break;
-                  case "center":
+                  case "center_bound":
                     x.push(this.data_arr[i][k]["time"]);
                     y.push(this.data_arr[i][k]["center"]);
-                    error1.push(this.data_arr[i][k]["right-bound"] - this.data_arr[i][k]["center"]);
+                    error1.push(this.data_arr[i][k]["right_bound"] - this.data_arr[i][k]["center"]);
                     error2.push(this.data_arr[i][k]["center"] - this.data_arr[i][k]["right_bound"]);
                     break;
-                  case "most_freq":
+                  case "most_freq_bound":
                     x.push(this.data_arr[i][k]["time"]);
                     y.push(this.data_arr[i][k]["most_freq"]);
-                    error1.push(this.data_arr[i][k]["right-bound"] - this.data_arr[i][k]["most_freq"]);
+                    error1.push(this.data_arr[i][k]["right_bound"] - this.data_arr[i][k]["most_freq"]);
                     error2.push(this.data_arr[i][k]["most_freq"] - this.data_arr[i][k]["right_bound"]);
                     break;
                 }
@@ -675,8 +673,9 @@ export class Options {
                 array: error1,
                 arrayminus: error2,
                 visible: true,
-                opacity: 0.5
-              }, name: i, pointRadius: 1, yaxis: "y" + String(m), type: 'scatter', text: all_data, line: {color: this.borderColor[m-1]}
+                opacity: 0.5,
+                color: this.borderColor[m-1]
+              }, name: i, pointRadius: 1, yaxis: "y" + String(m), type: 'scatter', line: {color: this.borderColor[m-1]}
             });
 
             m = m + 1;
@@ -685,6 +684,12 @@ export class Options {
 
           var layout = this.options[this.value];
           $(document).ready(function () {
+            document.getElementById('myDiv').style.height=window.innerHeight-120+"px";
+            document.getElementById('myDiv').style.width=window.innerWidth-400+"px";
+            window.onresize = function(){
+              document.getElementById('myDiv').style.height=window.innerHeight-120+"px";
+              document.getElementById('myDiv').style.width=window.innerWidth-400+"px";
+            };
             Plotly.newPlot('myDiv', cur, layout)
             var myPlot = <PlotHTMLElement>document.getElementById('myDiv');
             let l_this = local_this;

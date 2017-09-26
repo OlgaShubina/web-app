@@ -22,10 +22,12 @@ export class ParsTree {
     getChannel(channelsresponse: any[]=[]){
       let array_name = Object.keys(channelsresponse).sort();
 			let buff: any[] = [];
+			let buff2: {[id:string]: any[]};
 			for(let i = 0; i<array_name.length; i++){
-			  buff[array_name[i]] = channelsresponse[array_name[i]];
+      buff[array_name[i]] = channelsresponse[array_name[i]];
       }
-      channelsresponse = buff;
+      //channelsresponse = buff;
+
 		for( var key in channelsresponse){
 			var resultlist: any[]=[];
 			var data: any[] = [];
@@ -33,12 +35,11 @@ export class ParsTree {
 			var data: any[] = [];
 
 			data = channelsresponse[key];
-
 			for (var i in data){
 				if(Array.isArray(data[i])){
-				resultlist.push({name:data[i][0]["name"], condition:true});
-				resultdata[data[i][0]["name"]] = [{id: data[i][0]["id"], name: data[i][0]["name"], type: data[i][0]["type"], units: data[i][0]["units"], threshold: data[i][0]["threshold"], is_log : data[i][0]["is_log"], description: data[i][0]["description"], cas_type : data[i][0]["cas_type"]}];
-				resultdata["condition"] = true;
+          resultlist.push({name:data[i][0]["name"], condition:true});
+          resultdata[data[i][0]["name"]] = [{id: data[i][0]["id"], name: data[i][0]["name"], type: data[i][0]["type"], units: data[i][0]["units"], threshold: data[i][0]["threshold"], is_log : data[i][0]["is_log"], description: data[i][0]["description"], cas_type : data[i][0]["cas_type"]}];
+          resultdata["condition"] = true;
 			  }
 				else if(typeof data[i]==="object"){
 					for(var k in data[i])
@@ -48,12 +49,34 @@ export class ParsTree {
 							resultdata["condition"] = false;
 						}
 						else{
-							resultlist.push({name:k, condition:false});
-							resultdata[k] = data[i][k];
+						  if(typeof resultdata[k] !== "undefined"){
+						    let arr: any[] = [];
+						    for(var m in resultdata[k]){
+						      arr.push(resultdata[k][m]);
+                }
+                for(var l in data[i][k]){
+						      arr.push(data[i][k][l]);
+                }
+						    resultdata[k] = arr;
+                for( var j in resultlist){
+                  if(resultlist[j].name == k){
+
+                    resultlist[j] = {name:k, condition:false};
+                  }
+                }
+
+              }
+              else{
+						    resultdata[k] = data[i][k];
+						    resultlist.push({name:k, condition:false});
+              }
+
 							resultdata["condition"] = true;
 						}
+
 				}
 			}
+
 			this.arr[key] = {name: resultlist, data: resultdata};
 		}
 		return this.arr;

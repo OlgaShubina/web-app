@@ -65,8 +65,6 @@ export class ChannelDetailComponent {
 	ngOnInit() {
 		this.arr = this.parsTree.getChannel(this.channel.data);
 
-
-
  	}
 
 
