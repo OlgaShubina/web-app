@@ -22,29 +22,27 @@ declare let jQuery: any;
       </div>
       
       <div class="block4">
-        <select class="select" id="display_method" name="display_method" [(ngModel)]="check_method" (change)="setMethod(check_method)">
-          <option value="chart" disabled checked>Select display method</option>
-          <option value="chart">Chart</option>
-          <option value="error_bar">Error bar</option>
+        <select title="Select display method" class="select" id="display_method" name="display_method" [(ngModel)]="check_method" (change)="setMethod(check_method)">
+          <option value="chart" checked>Chart</option>
+          <option *ngIf="(check_level=='average')" value="error_bar">Error bar</option>
+          <option *ngIf="(check_level!='average')" value="error_bar">OHLC Chart</option>
           <option value="table">Table</option>
         </select>
       </div>  
       
       <div class="block5">            
         <div *ngIf="!data_sampler_condition&&!error_bar_condition">
-          <select class="select" id="average" name="average" [(ngModel)]="field">
-            <option value="avg" disabled checked>Select field</option>
-            <option value="avg">Average value</option>
+          <select title="Select field" class="select" id="average" name="average" [(ngModel)]="field">
+            <option value="avg" checked>Average value</option>
             <option value="min">Minimum value</option>
             <option value="max">Maximum value</option>
             <option value="mediana">Median</option>
-            <option value="sygma">Sigma</option>
+            <option value="sigma">Sigma</option>
           </select>
         </div>
         
         <div *ngIf="!data_sampler_condition&&error_bar_condition">
-          <select class="select" id="average" name="average" [(ngModel)]="field">
-            <option value="avg" disabled checked>Select field</option>
+          <select title="Select field" class="select" id="average" name="average" [(ngModel)]="field">           
             <option value="avg_sigma" checked>Average value with sigma</option>
             <option value="avg">Average value with min/max</option>                            
             <option value="mediana_sigma">Median with sigma</option>
@@ -53,8 +51,7 @@ declare let jQuery: any;
         </div>  
         
         <div *ngIf="data_sampler_condition&&!error_bar_condition">                      
-          <select class="select" id="average" name="average" [(ngModel)]="field">
-            <option value="avg" disabled checked>Select field</option>
+          <select title="Select field" class="select" id="average" name="average" [(ngModel)]="field">          
             <option value="left_bound" checked>Left border</option>
               <option value="right_bound">Right border</option>
               <option value="center">Central value</option>
@@ -63,8 +60,7 @@ declare let jQuery: any;
         </div>
         
         <div *ngIf="data_sampler_condition&&error_bar_condition">                      
-          <select class="select" id="average" name="average" [(ngModel)]="field">  
-            <option value="avg" disabled checked>Select field</option>
+          <select title="Select field" class="select" id="average" name="average" [(ngModel)]="field">              
             <option value="center_bound" checked>Central value with bound</option>
             <option value="most_freq_bound">Most frequent value with bound</option>
           </select>
@@ -72,8 +68,7 @@ declare let jQuery: any;
       </div>               	
        
       <div class="block3"> 
-          <select class="select" id="compression_method" name="compression_method" [(ngModel)]="check_level" (change)="setLevel(check_level)">
-             <option value="average" disabled checked>Select compression method</option>
+          <select title="Select compression method" class="select" id="compression_method" name="compression_method" [(ngModel)]="check_level" (change)="setLevel(check_level)">
             <option value="average" checked>Average</option>
             <option value="data_sampler">Data Sampler</option>
           </select>
@@ -114,7 +109,7 @@ declare let jQuery: any;
 			</div> 
     	 
       <div *ngIf="!print_raw" class="my-chart" id="my_chart">
-        <my-chart (conditionChange)=conditionChange($event) [error_ber_condition]="error_bar_condition"[chart_condition]="chart_condition" [table_draw_condition]="table_draw_condition" [check_method]="check_method" [alarm_condition]="alarm_condition" [send_condition]="send_condition" [time1]="time1" [time2]="time2" [field]="field" [check_level]="check_level" [channels]="checked" [compress_level]="compress_level" [value] ="value" [condition]="graph_condition" [raw_condition]="view_raw_condition"></my-chart>
+        <my-chart (conditionNumChart)=conditionNumChart($event) (conditionChange)=conditionChange($event) (conditionSendChange)=conditionSendChange($event) [error_ber_condition]="error_bar_condition"[chart_condition]="chart_condition" [table_draw_condition]="table_draw_condition" [check_method]="check_method" [alarm_condition]="alarm_condition" [send_condition]="send_condition" [time1]="t1" [time2]="t2" [field]="field" [check_level]="check_level" [channels]="checked" [compress_level]="compress_level" [value] ="value" [condition]="condition" [graph_condition]="graph_condition" [raw_condition]="view_raw_condition" [num_chart_condition]="num_chart_condition"></my-chart>
       </div>  
             	 
             	
@@ -318,6 +313,8 @@ export class DataComponent implements OnInit{
 	data_arr: any[] =[];
     time1: string;
     time2: string;
+    t1: string;
+    t2: string;
     channelsresponse: any[] = [];
     check_level: string = "average";
     check_method: string = "chart";
@@ -326,6 +323,7 @@ export class DataComponent implements OnInit{
 	channels: any[] = [];
 	error: any;
 	table_draw_condition: boolean;
+	num_chart_condition: boolean = false;
 	selectedChannel: string;
 	checked: any[] = [];
 	data: any;
@@ -357,23 +355,39 @@ export class DataComponent implements OnInit{
 
 	}
 	conditionChange(condition:boolean){
+		this.condition = condition;
+	}
+	conditionSendChange(condition:boolean){
 		this.send_condition = condition;
+	}
+	conditionNumChart(condition:boolean){
+		this.num_chart_condition = condition;
 	}
 	setMethod(check_level: string){
 		if(check_level=="chart"){
 			this.table_draw_condition = false;
 			this.error_bar_condition = false;
 			this.chart_condition = true;
+			this.num_chart_condition = false;
 		}
 		else if(check_level=="error_bar"){
 			this.table_draw_condition = false;
 			this.error_bar_condition = true;
 			this.chart_condition = false;
+			this.num_chart_condition = false;
 		}
+		else if(check_level=="num_chart"){
+		  this.table_draw_condition = false;
+			this.error_bar_condition = false;
+			this.chart_condition = false;
+			this.num_chart_condition = true;
+    }
 		else {
 			this.table_draw_condition = true;
 			this.error_bar_condition = false;
 			this.chart_condition = false;
+			this.num_chart_condition = false;
+
 		}
 
 	}
@@ -408,7 +422,7 @@ export class DataComponent implements OnInit{
     else{
       this.setLevel("raw");
       this.print_raw = this.raw_conditin;
-			this.httpService.getTemplate({t1:String(this.time1)+":00.00000", t2:String(this.time2)+":00.00000", channels: this.checked, level: "raw", "url": config.url["template_url"], "host": config.url["template_host"], "port": config.url["template_port"]}).subscribe(data=>{this.template=data["template"]; this.url=data["url"]});
+			this.httpService.getTemplate({t1:String(this.time1)+":00.00000", t2:String(this.time2)+":00.00000", channels: this.checked, level: "raw", "path": config.url["template_path"], "host": config.url["template_host"], "port": config.url["template_port"]}).subscribe(data=>{this.template=data["template"]; this.url=data["url"]});
       $(document).ready(function (){
         document.getElementById('print_raw').style.height = window.innerHeight - 120 + "px";
       document.getElementById('print_raw').style.width = window.innerWidth - 400 + "px";
@@ -449,6 +463,8 @@ export class DataComponent implements OnInit{
 	}
 
 	getCalculation(){
+    this.t1 = String(this.time1)+":00.00000";
+    this.t2 = String(this.time2)+":00.00000";
     this.setLevel(this.check_level);
     if((Date.parse(this.time2)-Date.parse(this.time1))<=0){
        alert("Enter the correct date");
@@ -458,6 +474,12 @@ export class DataComponent implements OnInit{
     }
     else if(this.checked.length<1){
       alert("Сhoose channels");
+    }
+    else if(((Date.parse(this.time2) - Date.parse(this.time1))*this.checked.length<=config.interval[0]) && (this.num_chart_condition==true)){
+      alert("Enter a larger period of time");
+    }
+    else if((this.checked.length!=2)&&(this.num_chart_condition==true)){
+      alert("Сhoose two channels");
     }
     else{
       this.value=this.checked.length-1;
@@ -481,14 +503,15 @@ export class DataComponent implements OnInit{
       this.view_raw_condition = this.compress_level_arr[this.compress_level]["condition"];
       this.print_raw = this.raw_conditin;
       for(var i in this.alarm_condition["checked"]){
-          if(parseInt(i)==this.compress_level){
-            this.alarm_condition["checked"][i]=true;
+          if(parseInt(i)>=this.compress_level){
+            this.alarm_condition["checked"][i]=false;
             this.alarm_condition["disabled"][i]=false;
           }
           else{
             this.alarm_condition["checked"][i]=false;
             this.alarm_condition["disabled"][i]=true;
           }
+          this.alarm_condition["checked"][this.compress_level] = true;
         }
       this.graph_condition = false;
     }
@@ -570,10 +593,10 @@ export class DataComponent implements OnInit{
 					console.log(error);
 				}
 			);
-      document.getElementById('block2').style.height = window.innerHeight - 200 + "px";
+      document.getElementById('block2').style.height = window.innerHeight - 190 + "px";
 
       window.onresize = function () {
-        document.getElementById('block2').style.height = window.innerHeight - 200 + "px";
+        document.getElementById('block2').style.height = window.innerHeight - 190 + "px";
       };
 
 

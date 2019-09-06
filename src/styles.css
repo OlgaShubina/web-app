@@ -8,12 +8,13 @@ h1 {
   font-size: 150%;
   float: right;
   margin-right: -75px;
-  margin-top: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   float: left;
 }
 .head{
   width: 100%;
-  height: 70px;
+  height: 60px;
   float: top;
 
   padding-color:#C0B283;
@@ -22,6 +23,7 @@ h1 {
 }
 img {
   margin-top: 15px;
+  padding-left: 5px;
   float: right;
   width: 70px;
   height: 35px;
@@ -74,10 +76,10 @@ button:disabled {
 }
 /* Navigation link styles */
 nav a {
-  padding: 10px 25px;
+  padding: 7px 20px;
   text-decoration: none;
-  margin-right: 10px;
-  margin-top: 32px;
+  margin-right: 0.7%;
+  margin-top: 28px;
   margin-bottom: 0px;
   display: inline-block;
   background-color: #DCD0C0;
